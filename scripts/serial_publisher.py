@@ -4,7 +4,7 @@ import rospy, serial, time, signal
 from std_msgs.msg import String
 from serial_interface.msg import Razorimu
 
-ser1 = serial.Serial('/dev/ttyS2',115200)
+#ser1 = serial.Serial('/dev/ttyS2',115200)
 latest_received1 = '0,0,0,0,0,0,0,0,0,0'
 buffer_bytes1 = b''
 
@@ -52,7 +52,11 @@ def read_from_serial2():
     splitline = latest_received2.split(',')
     for x in splitline:
         serial_data.append(float(x))
-    return(serial_data)
+    if len(serial_data) < 10:
+        print(serial_data)
+        exit(0)
+    else:
+        return(serial_data)
 
 if __name__ == '__main__':
     pub1 = rospy.Publisher('/Razor_IMUs/IMU1', Razorimu, queue_size=10)
@@ -62,8 +66,8 @@ if __name__ == '__main__':
     msg1 = Razorimu()
     msg2 = Razorimu()
     while True:
-        serial_data1 = read_from_serial1()
-        #serial_data1 = [0,1,2,3,4,5,6,7,8,9]
+        #serial_data1 = read_from_serial1()
+        serial_data1 = [0,1,2,3,4,5,6,7,8,9]
         serial_data2 = read_from_serial2()
         
         msg1.time_stamp = serial_data1[0]
@@ -88,7 +92,7 @@ if __name__ == '__main__':
         msg2.mag_y = serial_data2[8]
         msg2.mag_z = serial_data2[9]
         
-        rospy.loginfo(msg1)
+        #rospy.loginfo(msg1)
         rospy.loginfo(msg2)
         pub1.publish(msg1)
         pub2.publish(msg2)
