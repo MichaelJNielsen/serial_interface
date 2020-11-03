@@ -26,8 +26,9 @@ def read_from_serial1():
     buffer_bytes1 = buffer_bytes1 + temp_bytes
     buffer_string = buffer_bytes1.decode()
     lines = buffer_string.split('\r\n')
-    if len(lines) > 1:
-        latest_received1 = lines[-2]
+    filter_lines = list(filter(None,lines))
+    if len(filter_lines) > 1:
+        latest_received1 = filter_lines[-2]
         buffer_bytes1 = temp_bytes
     else:
         print("Not enough serial input, using last available")
@@ -61,8 +62,8 @@ def read_from_serial2():
     filter_lines = list(filter(None,lines))
     print("filter lines")
     print(filter_lines)
-    if len(lines) > 1:
-        latest_received2 = lines[-2]
+    if len(filter_lines) > 1:
+        latest_received2 = filter_lines[-2]
         buffer_bytes2 = temp_bytes
     else:
         print("Not enough serial input, using last available")
