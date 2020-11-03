@@ -4,7 +4,7 @@ import rospy, serial, time, signal
 from std_msgs.msg import String
 from serial_interface.msg import Razorimu
 
-#ser1 = serial.Serial('/dev/ttyS2',115200)
+ser1 = serial.Serial('/dev/ttyS2',115200)
 latest_received1 = '0,0,0,0,0,0,0,0,0,0'
 buffer_bytes1 = b''
 
@@ -81,6 +81,37 @@ def read_from_serial2():
     else:
         return(serial_data)
 
+def read_from_serial2_v2():
+    global latest_received2, buffer_bytes2
+    serial_data = []
+    bytesToRead = ser2.inWaiting()
+    print("bytesToRead")
+    print(bytesToRead)
+    if bytesToRead < 67:
+        print("Not enough serial input, using last available")
+    else:
+        temp_bytes = ser2.read(bytesToRead)
+        buffer_bytes2 = buffer_bytes2 + temp_bytes
+        buffer_string = buffer_bytes2.decode()
+        lines = buffer_string.split('\r\n')
+        print("lines")
+        print(lines)
+        filter_lines = list(filter(None,lines))
+        print("filter lines")
+        print(filter_lines)
+        if len(filter_lines) > 1:
+            latest_received2 = filter_lines[-2]
+            buffer_bytes2 = temp_bytes
+        else:
+            print("Not enough serial input, using last available")      
+    splitline = latest_received2.split(',')
+    for x in splitline:
+        serial_data.append(float(x))
+    if len(serial_data) < 10:
+        exit(0)
+    else:
+        return(serial_data)
+
 if __name__ == '__main__':
     pub1 = rospy.Publisher('/Razor_IMUs/IMU1', Razorimu, queue_size=10)
     pub2 = rospy.Publisher('/Razor_IMUs/IMU2', Razorimu, queue_size=10)
@@ -89,8 +120,8 @@ if __name__ == '__main__':
     msg1 = Razorimu()
     msg2 = Razorimu()
     while True:
-        #serial_data1 = read_from_serial1()
-        serial_data1 = [0,1,2,3,4,5,6,7,8,9]
+        serial_data1 = read_from_serial1()
+        #serial_data1 = [0,1,2,3,4,5,6,7,8,9]
         serial_data2 = read_from_serial2()
         
         msg1.time_stamp = serial_data1[0]
