@@ -80,13 +80,36 @@ def read_from_serial2():
         exit(0)
     else:
         return(serial_data)
+        
+def read_from_serial1_v2():
+    global latest_received1, buffer_bytes1
+    serial_data = []
+    bytesToRead = ser1.inWaiting()
+    if bytesToRead < 67:
+        print("Not enough serial input, using last available")
+    else:
+        temp_bytes = ser1.read(bytesToRead)
+        buffer_bytes1 = buffer_bytes1 + temp_bytes
+        buffer_string = buffer_bytes1.decode()
+        lines = buffer_string.split('\r\n')
+        filter_lines = list(filter(None,lines))
+        if len(filter_lines) > 1:
+            latest_received1 = filter_lines[-2]
+            buffer_bytes1 = temp_bytes
+        else:
+            print("Not enough serial input, using last available (due to lines)")      
+    splitline = latest_received1.split(',')
+    for x in splitline:
+        serial_data.append(float(x))
+    if len(serial_data) < 10:
+        exit(0)
+    else:
+        return(serial_data)
 
 def read_from_serial2_v2():
     global latest_received2, buffer_bytes2
     serial_data = []
     bytesToRead = ser2.inWaiting()
-    print("bytesToRead")
-    print(bytesToRead)
     if bytesToRead < 67:
         print("Not enough serial input, using last available")
     else:
@@ -94,16 +117,12 @@ def read_from_serial2_v2():
         buffer_bytes2 = buffer_bytes2 + temp_bytes
         buffer_string = buffer_bytes2.decode()
         lines = buffer_string.split('\r\n')
-        print("lines")
-        print(lines)
         filter_lines = list(filter(None,lines))
-        print("filter lines")
-        print(filter_lines)
         if len(filter_lines) > 1:
             latest_received2 = filter_lines[-2]
             buffer_bytes2 = temp_bytes
         else:
-            print("Not enough serial input, using last available")      
+            print("Not enough serial input, using last available (due to lines)")      
     splitline = latest_received2.split(',')
     for x in splitline:
         serial_data.append(float(x))
@@ -120,9 +139,9 @@ if __name__ == '__main__':
     msg1 = Razorimu()
     msg2 = Razorimu()
     while True:
-        serial_data1 = read_from_serial1()
+        serial_data1 = read_from_serial1_v2()
         #serial_data1 = [0,1,2,3,4,5,6,7,8,9]
-        serial_data2 = read_from_serial2()
+        serial_data2 = read_from_serial2_v2()
         
         msg1.time_stamp = serial_data1[0]
         msg1.acc_x = serial_data1[1]
@@ -146,8 +165,8 @@ if __name__ == '__main__':
         msg2.mag_y = serial_data2[8]
         msg2.mag_z = serial_data2[9]
         
-        #rospy.loginfo(msg1)
-        #rospy.loginfo(msg2)
+        rospy.loginfo(msg1)
+        rospy.loginfo(msg2)
         pub1.publish(msg1)
         pub2.publish(msg2)
         rate.sleep()
