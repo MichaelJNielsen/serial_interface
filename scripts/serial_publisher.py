@@ -4,7 +4,7 @@ import rospy, serial, time, signal
 from std_msgs.msg import String
 from serial_interface.msg import Razorimu
 
-ser1 = serial.Serial('/dev/ttyS2',115200)
+#ser1 = serial.Serial('/dev/ttyS2',115200)
 latest_received1 = '0,0,0,0,0,0,0,0,0,0'
 buffer_bytes1 = b''
 
@@ -58,6 +58,9 @@ def read_from_serial2():
     lines = buffer_string.split('\r\n')
     print("lines")
     print(lines)
+    filter_lines = list(filter(None,lines))
+    print("filter lines")
+    print(filter_lines)
     if len(lines) > 1:
         latest_received2 = lines[-2]
         buffer_bytes2 = temp_bytes
@@ -85,8 +88,8 @@ if __name__ == '__main__':
     msg1 = Razorimu()
     msg2 = Razorimu()
     while True:
-        serial_data1 = read_from_serial1()
-        #serial_data1 = [0,1,2,3,4,5,6,7,8,9]
+        #serial_data1 = read_from_serial1()
+        serial_data1 = [0,1,2,3,4,5,6,7,8,9]
         serial_data2 = read_from_serial2()
         
         msg1.time_stamp = serial_data1[0]
