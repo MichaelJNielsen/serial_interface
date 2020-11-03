@@ -81,8 +81,7 @@ if __name__ == '__main__':
 
     while True:
         beginTime = time.time()
-        #serial_data1 = read_from_serial1()
-        serial_data1 = [1,2,3,4,5,6,7,8,9,10]
+        serial_data1 = read_from_serial1()
         serial_data2 = read_from_serial2()
         
         msg1.time_stamp = serial_data1[0]
@@ -119,8 +118,8 @@ if __name__ == '__main__':
                 max_cycle = cycle
         if min_cycle > cycle:
                 min_cycle = cycle
-        print(max_cycle)
-        print(min_cycle)
+        #print(max_cycle)
+        #print(min_cycle)
         if  timer_i % 200 == 0:
                 max_cycle = 0
                 min_cycle = 10
