@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# license removed for brevity
 import rospy, serial, time, signal
 from std_msgs.msg import String
 from serial_interface.msg import Razorimu
@@ -138,9 +137,14 @@ if __name__ == '__main__':
     rate = rospy.Rate(50)
     msg1 = Razorimu()
     msg2 = Razorimu()
+
+    max_cycle = 0
+    min_cycle = 10
+    timer_i = 0
+
     while True:
+        beginTime = time.time()
         serial_data1 = read_from_serial1_v2()
-        #serial_data1 = [0,1,2,3,4,5,6,7,8,9]
         serial_data2 = read_from_serial2_v2()
         
         msg1.time_stamp = serial_data1[0]
@@ -171,6 +175,17 @@ if __name__ == '__main__':
         pub2.publish(msg2)
         rate.sleep()
         
+        timer_i = timer_i+1
+        cycle = time.time()-beginTime
+        if max_cycle < cycle:
+                max_cycle = cycle
+        if min_cycle > cycle:
+                min_cycle = cycle
+        print(max_cycle)
+        print(min_cycle)
+        if  timer_i % 200 == 0:
+                max_cycle = 0
+                min_cycle = 10
         
         
         
