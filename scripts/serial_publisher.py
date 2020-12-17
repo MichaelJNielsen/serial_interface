@@ -68,8 +68,8 @@ def read_from_serial2():
         return(serial_data)
 
 if __name__ == '__main__':
-    pub1 = rospy.Publisher('/Razor_IMUs/IMU1', Razorimu, queue_size=10)
-    pub2 = rospy.Publisher('/Razor_IMUs/IMU2', Razorimu, queue_size=10)
+    pub1 = rospy.Publisher('/Razor_IMU/SafeEye', Razorimu, queue_size=10)
+    pub2 = rospy.Publisher('/Razor_IMU/Accel1', Razorimu, queue_size=10)
     rospy.init_node('Razor_IMUs', anonymous=True)
     rate = rospy.Rate(50)
     msg1 = Razorimu()
