@@ -16,13 +16,16 @@ def keyboardInterruptHandler(signal,frame):
     exit(0)
 
 signal.signal(signal.SIGINT,keyboardInterruptHandler)
-        
+i = 0
+j = 0
 def read_from_serial1():
     global latest_received1, buffer_bytes1
     serial_data = []
     bytesToRead = ser1.inWaiting()
     if bytesToRead < 67:
-        print("Not enough serial input, using last available")
+        global i
+        i = i+1
+        print("SafeEye - Not enough serial input, using last available",i)
     else:
         temp_bytes = ser1.read(bytesToRead)
         buffer_bytes1 = buffer_bytes1 + temp_bytes
@@ -47,7 +50,9 @@ def read_from_serial2():
     serial_data = []
     bytesToRead = ser2.inWaiting()
     if bytesToRead < 67:
-        print("Not enough serial input, using last available")
+        global j
+        j = j+1
+        print("Accel1 - Not enough serial input, using last available",j)
     else:
         temp_bytes = ser2.read(bytesToRead)
         buffer_bytes2 = buffer_bytes2 + temp_bytes
@@ -106,23 +111,23 @@ if __name__ == '__main__':
         msg2.mag_y = serial_data2[8]
         msg2.mag_z = serial_data2[9]
         
-        rospy.loginfo(msg1)
-        rospy.loginfo(msg2)
+        #rospy.loginfo(msg1)
+        #rospy.loginfo(msg2)
         pub1.publish(msg1)
         pub2.publish(msg2)
         rate.sleep()
         
-        timer_i = timer_i+1
-        cycle = time.time()-beginTime
-        if max_cycle < cycle:
-                max_cycle = cycle
-        if min_cycle > cycle:
-                min_cycle = cycle
+        #timer_i = timer_i+1
+        #cycle = time.time()-beginTime
+        #if max_cycle < cycle:
+        #        max_cycle = cycle
+        #if min_cycle > cycle:
+        #        min_cycle = cycle
         #print(max_cycle)
         #print(min_cycle)
-        if  timer_i % 200 == 0:
-                max_cycle = 0
-                min_cycle = 10
+        #if  timer_i % 200 == 0:
+        #        max_cycle = 0
+        #        min_cycle = 10
         
         
         
