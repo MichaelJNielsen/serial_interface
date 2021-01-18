@@ -24,7 +24,7 @@ def read_from_serial1():
     bytesToRead = ser1.inWaiting()
     while bytesToRead > 209:
         j1 = j1+1
-        print(cycle, "- clearing: ", j1)
+        print(cycle, "- clearing SafeEye: ", j1)
         print(cycle, "-before clearing: ", bytesToRead)
         clearer = ser1.readline()
         bytesToRead = ser1.inWaiting()
@@ -48,7 +48,7 @@ def read_from_serial2():
     bytesToRead = ser2.inWaiting()
     while bytesToRead > 209:
         j2 = j2+1
-        print(cycle, "-clearing: ", j2)
+        print(cycle, "-clearing Accel1: ", j2)
         print(cycle, "-before clearing: ", bytesToRead)
         clearer = ser2.readline()
         bytesToRead = ser2.inWaiting()
