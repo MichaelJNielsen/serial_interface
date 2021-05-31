@@ -6,9 +6,6 @@ from serial_interface.msg import Razorimu
 ser1 = serial.Serial('/dev/ttyS2',115200)
 
 def keyboardInterruptHandler(signal,frame):
-    print("\ninterrupted")
-    print("Times cleared - SafeEye:", j1)
-    print("Times failed - SafeEye:", i1)
     exit(0)
 signal.signal(signal.SIGINT,keyboardInterruptHandler)
 
@@ -21,16 +18,11 @@ def read_from_serial1():
     bytesToRead = ser1.inWaiting()
     while bytesToRead > 209:
         j1 = j1+1
-        print(cycle, "- clearing SafeEye: ", j1)
-        print(cycle, "-before clearing: ", bytesToRead)
         clearer = ser1.readline()
         bytesToRead = ser1.inWaiting()
-        print(cycle, "-after clearing: ", bytesToRead)
         
     if bytesToRead < 65:
         i1 = i1+1
-        print(cycle, "-SafeEye - Not enough serial input, using last available",i1)
-        print(cycle, "-Bytes available = ", bytesToRead)
     else:
         bytes = ser1.readline()
         string = bytes.decode()
@@ -53,6 +45,9 @@ if __name__ == '__main__':
     while True:
         cycle = cycle+1
         read_from_serial1()
+
+        if (cycle > 100) and (i1 > 0.5*cycle):
+            exit(0)
         
         msg1.time_stamp = serial_data1[0]
         msg1.acc_x = serial_data1[1]

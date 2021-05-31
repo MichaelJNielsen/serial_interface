@@ -2,7 +2,7 @@
 import rospy, serial, time, signal
 i = 0
 j = 0
-ser = serial.Serial('/dev/ttyACM0',115200)
+ser = serial.Serial('/dev/ttyS2',115200)
 failed_bytes = 0
 mini = 100
 maxi = 0
@@ -18,7 +18,7 @@ def keyboardInterruptHandler(signal,frame):
 signal.signal(signal.SIGINT,keyboardInterruptHandler)
 
 def read_from_serial():
-    global i, serial_data
+    global i, j, serial_data
     bytesToRead = ser.inWaiting()
     while bytesToRead > 140:
         j = j+1
@@ -30,7 +30,7 @@ def read_from_serial():
         
     if bytesToRead < 65:
         i = i+1
-        print("XXX - Not enough serial input, using last available",i)
+        print("X - Not enough serial input, using last available",i)
     else:
         bytes = ser.readline()
         string = bytes.decode()
